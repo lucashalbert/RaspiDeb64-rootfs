@@ -1,0 +1,15 @@
+version: '2'
+services:
+  builder:
+    build: .
+    environment:
+    - WORKDIR=/workdir
+    - BUILDS=/workdir/builds
+    - HOSTNAME=RaspiDeb64
+    - BUILD_ARCH=arm64
+    - QEMU_ARCH=aarch64
+    - VARIANT=debian
+    - OS_VERSION=dirty
+    volumes:
+    - ./builds:/workdir/builds
+    privileged: true
