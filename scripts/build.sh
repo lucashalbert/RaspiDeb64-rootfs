@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+set -e
 
 # this script must be run in a container
 if [ ! -f /.dockerenv ]; then
@@ -23,6 +23,9 @@ if [[ ! -f ${BINFMT_MISC} || $(cat ${BINFMT_MISC}) != "enabled" ]]; then
     exit 1
 fi
 
+# source common variables
+. common_vars
+
 # build Debian rootfs for ARCH={armhf,arm64,mips,i386,amd64}
 # - Debian armhf = ARMv6/ARMv7
 # - Debian arm64 = ARMv8/Aarch64
@@ -35,6 +38,7 @@ QEMU_ARCH="${QEMU_ARCH:-aarch64}"
 VARIANT="${VARIANT:-debian}"
 OS_VERSION="${OS_VERSION:-dirty}"
 OS_RELEASE="${OS_RELEASE:-stretch}"
+BUILD_VERSION="${BUILD_VERSION:-v0.0.0-unknown}"
 ROOTFS_DIR="/debian-${BUILD_ARCH}"
 DEBOOTSTRAP_URL="http://ftp.debian.org/debian"
 DEFAULT_PACKAGES_INCLUDE="apt-transport-https,avahi-daemon,bash-completion,binutils,ca-certificates,curl,git-core,htop,locales,net-tools,ntp,openssh-server,parted,sudo,usbutils,wget,libpam-systemd"
@@ -107,7 +111,7 @@ rm -rf "$ROOTFS_DIR/{dev,sys,proc}/*"
 umask 0000
 
 pushd /workspace
-ARCHIVE_NAME="rootfs-${BUILD_ARCH}-${VARIANT}-${OS_RELEASE}-${OS_VERSION}-$(date "+%Y%m%dT%H%M%S").tar.gz"
+ARCHIVE_NAME="rootfs-${BUILD_ARCH}-${VARIANT}-${OS_RELEASE}-${OS_VERSION}-${BUILD_VERSION}.tar.gz"
 tar -czf "${BUILDS}/${ARCHIVE_NAME}" -C "${ROOTFS_DIR}/" .
 sha256sum "${BUILDS}/${ARCHIVE_NAME}" > "${BUILDS}/${ARCHIVE_NAME}.sha256"
 popd

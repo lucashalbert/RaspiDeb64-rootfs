@@ -1,13 +1,7 @@
 FROM debian:stretch-slim
 
 ENV WORKDIR=/workdir \
-    BUILDS=/workdir/builds \
-    HOSTNAME=RaspiDeb64 \
-    BUILD_ARCH=arm64 \
-    QEMU_ARCH=aarch64 \
-    VARIANT=debian \
-    OS_RELEASE=stretch \
-    OS_VERSION=dirty
+    BUILDS=/workdir/builds
 
 
 RUN apt-get update && apt-get install -y \
@@ -25,7 +19,7 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR ${WORKDIR}
 
-COPY scripts/* ${WORKDIR}/
+COPY scripts/* common_vars ${WORKDIR}/
 COPY files/ ${WORKDIR}/files/
 COPY test/ ${WORKDIR}/test/
 
